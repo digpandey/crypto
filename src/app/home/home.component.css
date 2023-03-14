@@ -1,0 +1,9 @@
+.feedback-popup {background: #fff;
+  position: absolute;
+  top:35%;
+  left: 25%;
+  z-index: 99;
+  width: 40%;
+  margin:0;}
+
+table th {padding:14px 12px !important;}

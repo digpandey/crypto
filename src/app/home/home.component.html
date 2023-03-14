@@ -1,0 +1,168 @@
+<div class="card mx-2 my-2">
+  <div class="card-title my-2 mx-4">
+   <h4 >Crypto</h4>
+  </div>
+  <ul class="nav nav-tabs mx-2">
+    <li class="nav-item" style="cursor: pointer">
+      <a class="nav-link active" aria-current="page" (click)="activeCmc = true; activeRedis = false"
+         [style]="activeCmc ? 'color: blue': 'color: black'">CMC Rank</a>
+    </li>
+    <li class="nav-item" style="cursor: pointer">
+      <a class="nav-link" (click)="getRedisData(); activeRedis = true"
+         [style]="activeRedis ? 'color: blue': 'color: black'">Redis Rank</a>
+    </li>
+  </ul>
+  <div class="card mx-4 my-4"  *ngIf="activeCmc">
+  <div class="card-body">
+    <div class="card-header">
+      <h5>CMC Rank</h5>
+    </div>
+    <table class="table table-striped table-bordered">
+      <thead>
+      <tr>
+        <th scope="col">Rank</th>
+        <th scope="col">Name</th>
+        <th scope="col">Twitter Username</th>
+        <th scope="col">Tweet Count</th>
+        <th scope="col">Followers Count</th>
+        <th scope="col">Last Updated</th>
+        <th scope="col">Change 1h %</th>
+        <th scope="col">Change 24h %</th>
+        <th scope="col">Change 7d %</th>
+        <th scope="col">Change 30d %</th>
+        <th scope="col">Updated on</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let row of cmcData">
+        <th style="text-align: center;">{{row.cmc_rank}}.</th>
+        <td (click)="logoModle(row)" style="display: flex; padding: 20px; cursor: pointer"><img [src]="row.info_logo" alt="logo" width="50px">&nbsp;&nbsp;
+          <span style="font-size: x-large; display: flex; align-items: center; justify-content: center">
+            {{row.name}}</span>&nbsp;<span style="color: #52527a; display: flex; align-items: center; justify-content: center">&nbsp;&nbsp;&nbsp;{{row.symbol}}</span></td>
+        <td>{{row.info_twitter_username}}</td>
+        <td>{{row.tweet_count}}</td>
+        <td>{{row.followers_count}}</td>
+        <td>{{row.last_updated | date: 'short'}}</td>
+        <td><span *ngIf="row.percent_change_1h >= 0" style="color: green">{{row.percent_change_1h}}</span>
+          <span *ngIf="row.percent_change_1h < 0" style="color: red">{{row.percent_change_1h}}</span></td>
+<!--        <td><span *ngIf="row.percent_change_24h >= 0" style="color: green">{{row.percent_change_24h}}</span>-->
+<!--          <span *ngIf="row.percent_change_24h < 0" style="color: red">{{row.percent_change_24h}}</span></td>-->
+        <td>
+          <ngx-charts-line-chart
+            [view]="[200, 70]"
+            [results]="row.percpercent_change_1h_chart"
+            [xAxis]="false"
+            [scheme]="colorScheme"
+            [showGridLines]="false">
+          </ngx-charts-line-chart>
+        </td>
+        <td><span *ngIf="row.percent_change_7d >= 0" style="color: green">{{row.percent_change_7d}}</span>
+          <span *ngIf="row.percent_change_7d < 0" style="color: red">{{row.percent_change_7d}}</span></td>
+        <td><span *ngIf="row.percent_change_30d >= 0" style="color: green">{{row.percent_change_30d}}</span>
+          <span *ngIf="row.percent_change_30d < 0" style="color: red">{{row.percent_change_30d}}</span></td>
+        <td>{{row.updated_on | date: 'short'}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center"  *ngIf="totalPages > 1">
+        <li class="page-item" [ngClass]="page === 1? 'disabled':''" >
+          <a class="page-link" (click)="previousPage('cmc')" style="cursor: pointer">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link">{{currPage}}</a></li>
+        <li class="page-item" [ngClass]="page === totalPages? 'disabled':''">
+          <a class="page-link" (click)="nextPage('cmc')" style="cursor: pointer">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+
+  <div class="card mx-4 my-4"  *ngIf="activeRedis">
+  <div class="card-body">
+    <div class="card-header">
+      <h5>Redis Rank</h5>
+    </div>
+    <table class="table table-striped table-bordered">
+      <thead>
+      <tr>
+        <th scope="col">Rank</th>
+        <th scope="col">Name</th>
+        <th scope="col">Twitter Username</th>
+        <th scope="col">Tweet Count</th>
+        <th scope="col">Followers Count</th>
+        <th scope="col">Last Updated</th>
+        <th scope="col">Change 1h %</th>
+        <th scope="col">Change 24h %</th>
+        <th scope="col">Change 7d %</th>
+        <th scope="col">Change 30d %</th>
+        <th scope="col">Updated on</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let row of redisData">
+        <th style="text-align: center;">{{row.redis_rank}}.</th>
+        <td (click)="logoModle(row)" style="display: flex; padding: 20px; cursor: pointer"><img [src]="row.info_logo" alt="logo" width="50px">&nbsp;&nbsp;
+          <span>{{row.name}}</span>&nbsp;<span style="color: darkgray">{{row.symbol}}</span></td>
+        <td>{{row.info_twitter_username}}</td>
+        <td>{{row.tweet_count}}</td>
+        <td>{{row.followers_count}}</td>
+        <td>{{row.last_updated | date: 'short'}}</td>
+        <td><span *ngIf="row.percent_change_1h >= 0" style="color: green">{{row.percent_change_1h}}</span>
+          <span *ngIf="row.percent_change_1h < 0" style="color: red">{{row.percent_change_1h}}</span></td>
+<!--        <td><span *ngIf="row.percent_change_24h >= 0" style="color: green">{{row.percent_change_24h}}</span>-->
+<!--          <span *ngIf="row.percent_change_24h < 0" style="color: red">{{row.percent_change_24h}}</span></td>-->
+        <ngx-charts-line-chart
+          [view]="[200, 70]"
+          [results]="row.percpercent_change_1h_chart"
+          [xAxis]="false"
+          [scheme]="colorScheme"
+          [showGridLines]="false">
+        </ngx-charts-line-chart>
+        <td><span *ngIf="row.percent_change_7d >= 0" style="color: green">{{row.percent_change_7d}}</span>
+          <span *ngIf="row.percent_change_7d < 0" style="color: red">{{row.percent_change_7d}}</span></td>
+        <td><span *ngIf="row.percent_change_30d >= 0" style="color: green">{{row.percent_change_30d}}</span>
+          <span *ngIf="row.percent_change_30d < 0" style="color: red">{{row.percent_change_30d}}</span></td>
+        <td>{{row.updated_on | date: 'short'}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center"  *ngIf="totalPages > 1">
+        <li class="page-item" [ngClass]="page === 1? 'disabled':''" >
+          <a class="page-link" (click)="previousPage('redis')" style="cursor: pointer">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link">{{currPage}}</a></li>
+        <li class="page-item" [ngClass]="page === totalPages? 'disabled':''">
+          <a class="page-link" (click)="nextPage('redis')" style="cursor: pointer">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+</div>
+
+
+
+<div *ngIf="logoDialog">
+  <div class="feedback-popup">
+    <div class="card">
+      <div class="card-body">
+        <div><h5>{{modelData?.name}}<span style="float: right; cursor: pointer" (click)="logoDialog = false">X</span></h5></div>
+        <div class="row">
+          <div class="col">Info Reddit	</div>
+          <div class="col">{{modelData?.info_reddit}}</div>
+        </div>
+        <div class="row">
+          <div class="col">Info Twitter	</div>
+          <div class="col">{{modelData?.info_twitter}}	</div>
+        </div>
+        <div class="row">
+          <div class="col">Info Website	</div>
+          <div class="col">{{modelData?.info_website}}	</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
